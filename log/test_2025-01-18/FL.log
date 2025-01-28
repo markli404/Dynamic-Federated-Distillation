@@ -1,0 +1,91 @@
+[INFO](2025/01/18/ 10:08:34 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:08:34 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:11:05 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:11:05 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:11:05 AM) [Round: 0000] ...sucessfully initialized dataset controller for [mnist]
+[INFO](2025/01/18/ 10:11:05 AM) [Round: 0000] ...successfully created all 20 clients!
+[INFO](2025/01/18/ 10:11:11 AM) [Round: 0000] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:11:29 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:11:29 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:11:38 AM) [Round: 0000] ...sucessfully initialized dataset controller for [cifar10]
+[INFO](2025/01/18/ 10:11:38 AM) [Round: 0000] ...successfully created all 20 clients!
+[INFO](2025/01/18/ 10:11:38 AM) [Round: 0000] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:12:39 AM) [Round: 0001] ...20 clients are selected and updated
+[INFO](2025/01/18/ 10:12:39 AM) [Round: 0001] [1, 2, 11, 6, 10, 18, 17, 12, 13, 4, 0, 15, 14, 5, 8, 19] clients selected (based on largest MMD).
+[INFO](2025/01/18/ 10:12:39 AM) [Round: 0001] Updating [1, 2, 11, 6, 10, 18, 17, 12, 13, 4, 0, 15, 14, 5, 8, 19] clients...!
+[INFO](2025/01/18/ 10:16:55 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:16:55 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:16:57 AM) [Round: 0000] ...sucessfully initialized dataset controller for [cifar10]
+[INFO](2025/01/18/ 10:16:57 AM) [Round: 0000] ...successfully created all 20 clients!
+[INFO](2025/01/18/ 10:16:57 AM) [Round: 0000] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:17:52 AM) [Round: 0001] ...20 clients are selected and updated
+[INFO](2025/01/18/ 10:17:53 AM) [Round: 0001] [7, 15, 12, 13, 4, 5, 17, 1, 14, 11, 0, 19, 3, 8, 10, 2] clients selected (based on largest MMD).
+[INFO](2025/01/18/ 10:17:53 AM) [Round: 0001] Updating [7, 15, 12, 13, 4, 5, 17, 1, 14, 11, 0, 19, 3, 8, 10, 2] clients...!
+[INFO](2025/01/18/ 10:17:54 AM) [Round: 0001] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:17:54 AM) [Round: 0001] Current test set distribution: [['0.05', '0.08', '0.11', '0.11', '0.10', '0.09', '0.10', '0.13', '0.10', '0.13']]. 
+[INFO](2025/01/18/ 10:17:55 AM) [Round: 0001] Evaluate global model's performance...!                
+	[Server] ...finished evaluation!                
+	=> Loss: 2.3143                
+	=> Accuracy: 8.08%                
+	=> Class Accuracy: ['0.01', '0.20', '0.00', '0.01', '0.00', '0.65', '0.02', '0.00', '0.00', '0.02']
+
+[INFO](2025/01/18/ 10:17:55 AM) [Round: 0001] Clients have uploaded their model 16 times！
+[INFO](2025/01/18/ 10:17:55 AM) [Round: 0001] Overall Accuracy is 0.0808!
+[INFO](2025/01/18/ 10:18:48 AM) [Round: 0002] ...20 clients are selected and updated
+[INFO](2025/01/18/ 10:18:48 AM) [Round: 0002] [4, 7, 15, 14, 1, 17, 12, 13, 8, 0, 11, 10, 3, 19, 2, 5] clients selected (based on largest MMD).
+[INFO](2025/01/18/ 10:18:48 AM) [Round: 0002] Updating [4, 7, 15, 14, 1, 17, 12, 13, 8, 0, 11, 10, 3, 19, 2, 5] clients...!
+[INFO](2025/01/18/ 10:18:49 AM) [Round: 0002] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:18:50 AM) [Round: 0002] Current test set distribution: [['0.05', '0.08', '0.11', '0.11', '0.10', '0.09', '0.10', '0.13', '0.10', '0.13']]. 
+[INFO](2025/01/18/ 10:18:51 AM) [Round: 0002] Evaluate global model's performance...!                
+	[Server] ...finished evaluation!                
+	=> Loss: 2.3163                
+	=> Accuracy: 8.56%                
+	=> Class Accuracy: ['0.03', '0.21', '0.00', '0.02', '0.00', '0.68', '0.02', '0.00', '0.00', '0.02']
+
+[INFO](2025/01/18/ 10:18:51 AM) [Round: 0002] Clients have uploaded their model 32 times！
+[INFO](2025/01/18/ 10:18:51 AM) [Round: 0002] Overall Accuracy is 0.0832!
+[INFO](2025/01/18/ 10:19:34 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:19:34 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:19:35 AM) [Round: 0000] ...sucessfully initialized dataset controller for [cifar10]
+[INFO](2025/01/18/ 10:19:35 AM) [Round: 0000] ...successfully created all 20 clients!
+[INFO](2025/01/18/ 10:19:35 AM) [Round: 0000] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:20:28 AM) [Round: 0001] ...20 clients are selected and updated
+[INFO](2025/01/18/ 10:20:29 AM) [Round: 0001] [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 14, 15, 16, 17, 19] clients are selected for the next update with possibility [0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+ 0.05 0.05].
+[INFO](2025/01/18/ 10:20:29 AM) [Round: 0001] Updating [0, 1, 2, 3, 4, 5, 6, 8, 9, 11, 12, 14, 15, 16, 17, 19] clients...!
+[INFO](2025/01/18/ 10:20:29 AM) [Round: 0001] ...with the weights of [0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+ 0.05 0.05].
+[INFO](2025/01/18/ 10:20:29 AM) [Round: 0001] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:20:29 AM) [Round: 0001] Current test set distribution: [['0.08', '0.11', '0.09', '0.12', '0.12', '0.09', '0.12', '0.07', '0.08', '0.12']]. 
+[INFO](2025/01/18/ 10:20:30 AM) [Round: 0001] Evaluate global model's performance...!                
+	[Server] ...finished evaluation!                
+	=> Loss: 2.1553                
+	=> Accuracy: 20.32%                
+	=> Class Accuracy: ['0.14', '0.23', '0.00', '0.09', '0.87', '0.00', '0.11', '0.00', '0.04', '0.29']
+
+[INFO](2025/01/18/ 10:20:30 AM) [Round: 0001] Clients have uploaded their model 16 times！
+[INFO](2025/01/18/ 10:20:30 AM) [Round: 0001] Overall Accuracy is 0.2032!
+[INFO](2025/01/18/ 10:22:25 AM) 
+[WELCOME] 
+[INFO](2025/01/18/ 10:22:25 AM) [Round: 0000] ...successfully initialized model (# parameters: 2155872)!
+[INFO](2025/01/18/ 10:22:26 AM) [Round: 0000] ...sucessfully initialized dataset controller for [cifar10]
+[INFO](2025/01/18/ 10:22:27 AM) [Round: 0000] ...successfully created all 20 clients!
+[INFO](2025/01/18/ 10:22:27 AM) [Round: 0000] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:23:32 AM) [Round: 0001] ...20 clients are selected and updated
+[INFO](2025/01/18/ 10:23:33 AM) [Round: 0001] [0, 16, 8, 6, 9, 13, 5, 17, 1, 15, 3, 14, 2, 18, 10, 12] clients selected (based on largest MMD).
+[INFO](2025/01/18/ 10:23:33 AM) [Round: 0001] Updating [0, 16, 8, 6, 9, 13, 5, 17, 1, 15, 3, 14, 2, 18, 10, 12] clients...!
+[INFO](2025/01/18/ 10:23:34 AM) [Round: 0001] ...successfully transmitted models to all 20 clients!
+[INFO](2025/01/18/ 10:23:34 AM) [Round: 0001] Current test set distribution: [['0.13', '0.09', '0.12', '0.08', '0.15', '0.07', '0.07', '0.11', '0.07', '0.11']]. 
+[INFO](2025/01/18/ 10:23:36 AM) [Round: 0001] Evaluate global model's performance...!                
+	[Server] ...finished evaluation!                
+	=> Loss: 3.1132                
+	=> Accuracy: 23.92%                
+	=> Class Accuracy: ['0.76', '0.00', '0.00', '0.00', '0.92', '0.00', '0.00', '0.00', '0.00', '0.02']
+
+[INFO](2025/01/18/ 10:23:36 AM) [Round: 0001] Clients have uploaded their model 16 times！
+[INFO](2025/01/18/ 10:23:36 AM) [Round: 0001] Overall Accuracy is 0.2392!
