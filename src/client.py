@@ -53,6 +53,11 @@ class Client(object):
         self.gradient_magnitude = []
         self.sparse_ratio = 0.1
 
+        # distillation
+        self.shared = None
+        self.distillation_criterion = 'torch.nn.KLDivLoss'
+        self.temperature = 1
+
     def get_gradient(self):
         grad = np.subtract(self.global_current.flatten_model(), self.client_current.flatten_model())
         # return grad / (args.num_sample * args.local_ep * lr / args.local_bs)
@@ -246,6 +251,41 @@ class Client(object):
         self.c_local.load_state_dict(c_new_para)
         self.c_delta_para = c_delta_para
         # print(self.c_delta_para)
+
+    def client_update_distillation(self):
+        """联邦蒸馏客户端更新"""
+        self.client_current.train()
+        self.client_current.to(self.device)
+
+        # 确保使用正确的优化器
+        optimizer = eval(self.optimizer)(self.client_current.parameters(), **self.optim_config)
+
+        # 获取组合数据集的加载器
+
+        for e in range(self.local_epoch):
+            for batch in self.shared.get_dataloader():
+                # 解包数据：支持不同数据源格式
+                if len(batch) == 2:  # 普通数据 (data, label)
+                    data, labels = batch
+                    y_soft = None
+                else:  # 蒸馏数据 (data, label_hard, label_soft)
+                    data, labels, y_soft = batch
+
+                data = data.float().to(self.device)
+                labels = labels.long().to(self.device)
+
+                outputs = self.client_current(data)
+
+                hard_loss = eval(self.criterion)()(outputs, labels)
+                soft_loss = 0
+                if y_soft is not None:
+                    y_soft = y_soft.to(self.device)
+
+                    # apply temperature
+                    student_log_probs = torch.log_softmax(outputs / self.temperature, dim=1)
+                    teacher_probs = torch.softmax(y_soft / self.temperature, dim=1)
+                    distill_loss = torch.nn.functional.kl_div(
+                        student_log_p
 
     def evaluate(self, model, dataset):
         model.eval()

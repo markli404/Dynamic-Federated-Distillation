@@ -99,6 +99,7 @@ class Server(object):
               dataset,
               number_of_training_samples,
               number_of_testing_samples,
+              number_of_shared_samples_per_class,
               upload_chance,
               exploration_rate,
               utilization_rate,
@@ -132,7 +133,10 @@ class Server(object):
             f"...successfully initialized model (# parameters: {str(sum(p.numel() for p in self.model.parameters()))})!")
 
         # initialize DatasetController
-        self.DatasetController = DatasetController(dataset, number_of_training_samples, number_of_testing_samples)
+        self.DatasetController = DatasetController(dataset,
+                                                   number_of_training_samples,
+                                                   number_of_testing_samples,
+                                                   number_of_shared_samples_per_class)
         self.log('...sucessfully initialized dataset controller for [{}]'.format(dataset))
 
         # create clients

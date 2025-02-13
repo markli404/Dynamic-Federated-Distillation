@@ -27,6 +27,7 @@ def main():
 
     parser.add_argument('--number_of_clients', type=int, default=20)
     parser.add_argument('--number_of_selected_classes', type=int, default=5)
+    parser.add_argument('--number_of_shared_samples_per_class', type=int, default=200)
 
     # 客户端选择相关
     parser.add_argument('--upload_chance', type=float, default=0.8)
@@ -60,6 +61,7 @@ def main():
                              dataset=args.dataset,
                              number_of_training_samples=args.number_of_training_samples,
                              number_of_testing_samples=args.number_of_testing_samples,
+                             number_of_shared_samples_per_class=args.number_of_shared_samples_per_class,
                              upload_chance=args.upload_chance,
                              exploration_rate=args.exploration_rate,
                              utilization_rate=args.utilization_rate,

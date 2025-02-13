@@ -7,10 +7,10 @@ from utils.CustomDatasets import load_CINIC10
 
 logger = logging.getLogger(__name__)
 
-
 DATA_PATH = './data/'
+
 class CustomTensorDataset(Dataset):
-    """TensorDataset with support of transforms."""
+    """TensorDataset with support of transforms and dataset merging."""
     def __init__(self, tensors, batch_size=128, transform=None):
         assert all(tensors[0].size(0) == tensor.size(0) for tensor in tensors)
         self.tensors = tensors
@@ -28,11 +28,22 @@ class CustomTensorDataset(Dataset):
         return self.tensors[0].size(0)
 
     def __add__(self, other):
-        assert self.tensors[0][0].size(0) == other.tensors[0][0].size(0)
-        data = torch.cat((self.tensors[0], other.tensors[0]), 0)
-        label = torch.cat((self.tensors[1], other.tensors[1]), 0)
+        assert isinstance(other, CustomTensorDataset), "Only apply to same dataset"
 
-        self.tensors = (data, label)
+        # 检查数据维度兼容性（忽略样本数量维度）
+        assert self.tensors[0].shape[1:] == other.tensors[0].shape[1:], \
+            f"Dimension Mismatch: {self.tensors[0].shape} vs {other.tensors[0].shape}"
+
+        # 合并数据和标签
+        merged_data = torch.cat((self.tensors[0], other.tensors[0]), dim=0)
+        merged_labels = torch.cat((self.tensors[1], other.tensors[1]), dim=0)
+
+        # 保留左侧数据集的参数（transform和batch_size）
+        return CustomTensorDataset(
+            tensors=(merged_data, merged_labels),
+            batch_size=self.batch_size,
+            transform=self.transform
+        )
 
     def sort_by_class(self):
         sorted_dataset_by_class = []
@@ -43,24 +54,10 @@ class CustomTensorDataset(Dataset):
         for i in np.unique(labels):
             idx = np.where(labels == i)
             sorted_dataset_by_class.append(images[idx, :][0])
-
         return sorted_dataset_by_class
 
     def get_dataloader(self):
         return DataLoader(self, batch_size=self.batch_size, shuffle=True)
-
-#替换类别，class1，2对应从X替换成X，会替换所有client
-    def class_swap(self, class_1, class_2):
-        labels = self.tensors[1].numpy()
-        class_1_labels = np.array(labels == class_1).astype(int)
-        # 注释为类别交换
-        #class_2_labels = np.array(labels == class_2).astype(int)
-# 注释为类别交换
-        class_1_labels = class_1_labels * (class_2 - class_1)
-        #class_2_labels = class_2_labels * (class_1 - class_2)
-
-        labels += class_1_labels #+ class_2_labels #也需要
-        self.tensors = (self.tensors[0], torch.Tensor(labels))
 
     class AddGaussianNoise(object):
         def __init__(self, level=1):
@@ -70,20 +67,108 @@ class CustomTensorDataset(Dataset):
             return tensor + torch.randn(tensor.size()) * self.std
 
         def __repr__(self):
-            return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
+            return self.__class__.__name__ + f'(std={self.std})'
 
-    def add_guassian_noise(self, level):
+    def add_gaussian_noise(self, level):
         images = self.tensors[0]
         images = images + torch.randn(images.size()) * level
         self.tensors = (images, self.tensors[1])
 
 
+class SoftLabelDataset(Dataset):
+    """支持动态更新软标签的数据集类"""
+
+    def __init__(self, data, hard_labels, soft_labels=None, batch_size=128, transform=None):
+        """
+        Args:
+            data (Tensor): 原始数据 [N, C, H, W]
+            hard_labels (LongTensor): 硬标签 [N]
+            soft_labels (Tensor): 软标签 [N, C]（可选）
+        """
+        self.data = data
+        self.hard_labels = hard_labels
+        self.soft_labels = soft_labels
+        self.batch_size = batch_size
+        self.transform = transform
+
+        # 维度验证
+        assert len(data) == len(hard_labels), "数据与标签数量不匹配"
+        if soft_labels is not None:
+            assert len(data) == len(soft_labels), "数据与软标签数量不匹配"
+            assert soft_labels.shape[1] == (hard_labels.max() + 1), "软标签维度错误"
+
+    def __getitem__(self, index):
+        x = self.data[index]
+        y_hard = self.hard_labels[index]
+        y_soft = self.soft_labels[index] if self.soft_labels is not None else y_hard  # 回退到硬标签
+
+        if self.transform:
+            x = self.transform(x.numpy().astype(np.uint8))
+
+        return x, y_hard, y_soft
+
+    def __len__(self):
+        return len(self.data)
+
+    def init_soft_labels(self, num_classes=None):
+        """初始化软标签（默认使用one-hot）"""
+        if num_classes is None:
+            num_classes = self.hard_labels.max() + 1
+        self.soft_labels = torch.eye(num_classes)[self.hard_labels]
+
+    def get_dataloader(self, shuffle=True):
+        return DataLoader(self, batch_size=self.batch_size, shuffle=shuffle)
+
+    def update_soft_labels(self, new_soft_labels, indices=None):
+        """
+        更新指定索引的软标签
+        Args:
+            new_soft_labels (Tensor): 新软标签 [B, num_classes] 或 [N, num_classes]
+            indices (Tensor): 要更新的索引 [B]
+        """
+        if indices is None:
+            assert len(new_soft_labels) == len(self), "全量更新时新标签数量必须匹配"
+            self.soft_labels = new_soft_labels.clone()
+        else:
+            assert new_soft_labels.shape[0] == len(indices), "索引数量与新标签不匹配"
+            self.soft_labels[indices] = new_soft_labels.clone()
+
+    def average_soft_labels(self, other_dataset, alpha=0.5):
+        """
+        与其他数据集的软标签加权平均
+        Args:
+            other_dataset (SoftLabelDataset): 另一个数据集
+            alpha (float): 本数据集的权重 (其他数据集的权重为 1-alpha)
+        """
+        assert torch.allclose(self.data, other_dataset.data), "只能对相同数据分布的数据集进行平均"
+        self.soft_labels = alpha * self.soft_labels + (1 - alpha) * other_dataset.soft_labels
+        self.soft_labels = self.soft_labels / self.soft_labels.sum(dim=1, keepdim=True)  # 重新归一化
+
+    @property
+    def num_classes(self):
+        return self.soft_labels.shape[1]
+
+    def clone(self):
+        """创建数据集的深拷贝"""
+        return SoftLabelDataset(
+            self.data.clone(),
+            self.hard_labels.clone(),
+            self.soft_labels.clone(),
+            self.batch_size,
+            self.transform
+        )
+
+
 # 负责根据各种分布生成训练集
 class DatasetController:
-    def __init__(self, dataset_name, number_of_training_samples, number_of_testing_samples):
+    def __init__(self, dataset_name,
+                 number_of_training_samples,
+                 number_of_testing_samples,
+                 shared_samples_per_class=100):
         global training_dataset, test_dataset, transform
         self.number_of_training_samples = number_of_training_samples
         self.number_of_testing_samples = number_of_testing_samples
+        self.shared_samples_per_class = shared_samples_per_class
 
         dataset_name = dataset_name.upper()
         # get dataset from torchvision.datasets if exists
@@ -158,6 +243,8 @@ class DatasetController:
         self.sorted_test_data = sorted_test_data
         self.sorted_test_indices = sorted_test_indices
         self.transform = transform
+        self.num_class = np.unique(training_dataset.targets).shape[0]
+        self.shared_dataset = self.generate_shared_dataset()
 
     def get_sorted_data_and_indices(self, data, targets):
         from collections import defaultdict
@@ -232,6 +319,35 @@ class DatasetController:
                 self.sorted_test_indices[class_id] = np.delete(available_indices, selected_indices)
 
         return res
+
+    def generate_shared_dataset(self):
+        """生成基础共享数据集（仅含硬标签）"""
+        shared_input = []
+        shared_hard_labels = []
+
+        # 按类别采样
+        for class_id in range(self.num_class):
+            indices = self.draw_data_index_by_class(
+                class_id=class_id,
+                n=self.shared_samples_per_class,
+                train=True,
+                remove_from_pool=True,
+                draw_from_pool=True
+            )
+            shared_input.extend(self.sorted_train_data[indices])
+            shared_hard_labels.extend([class_id] * len(indices))
+
+        # 转换为Tensor
+        data_tensor = torch.Tensor(np.array(shared_input))
+        hard_label_tensor = torch.LongTensor(shared_hard_labels)
+
+        return SoftLabelDataset(
+            data=data_tensor,
+            hard_labels=hard_label_tensor,
+            soft_labels=None,
+            batch_size=128,
+            transform=self.transform
+        )
 
     def get_dataset_for_client(self, client):
         new_train_set = self.draw_data_by_distribution(client.distribution, self.number_of_training_samples, train=True)

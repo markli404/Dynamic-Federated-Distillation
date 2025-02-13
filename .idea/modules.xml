@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/GradiantRotation.iml" filepath="$PROJECT_DIR$/.idea/GradiantRotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Dynamic-Federated-Distillation.iml" filepath="$PROJECT_DIR$/.idea/Dynamic-Federated-Distillation.iml" />
     </modules>
   </component>
 </project>
